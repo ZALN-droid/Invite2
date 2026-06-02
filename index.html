@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wedding Invitation</title>
+
+<style>
+
+/* ===== BASE ===== */
+
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: white;
+}
+
+body {
+    position: relative;
+}
+
+/* ===== PAGE 1 (hidden initially) ===== */
+
+#page1 {
+    position: absolute;
+    inset: 0;
+
+    background-image: url("image1.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    opacity: 0;
+    transition: opacity 0.6s ease;
+
+    z-index: 1;
+}
+
+/* ===== ENVELOPE PANELS ===== */
+
+.panel {
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+
+    background-size: cover;
+    background-position: center;
+
+    transition: transform 1.2s ease;
+    z-index: 5;
+}
+
+.left {
+    left: 0;
+    background-image: url("left.png");
+}
+
+.right {
+    right: 0;
+    background-image: url("right.png");
+    box-shadow: -20px 0 25px rgba(0,0,0,0.25);
+}
+
+/* ===== SEAL ===== */
+
+.seal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 140px;
+
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+
+    z-index: 10;
+    transition: opacity 0.4s ease;
+}
+
+/* ===== TAP TEXT ===== */
+
+.tap-text {
+    position: absolute;
+    top: calc(50% + 100px);
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    font-family: Garamond, serif;
+    font-size: 22px;
+    color: black;
+
+    z-index: 10;
+    transition: opacity 0.4s ease;
+}
+
+/* ===== OPEN ANIMATION ===== */
+
+.open .left {
+    transform: translateX(-100%);
+}
+
+.open .right {
+    transform: translateX(100%);
+}
+
+.open .seal,
+.open .tap-text {
+    opacity: 0;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- PAGE 1 -->
+<div id="page1"></div>
+
+<!-- ENVELOPE -->
+<div class="panel left"></div>
+<div class="panel right"></div>
+
+<!-- SEAL -->
+<img src="seal.png" class="seal" onclick="openEnvelope()">
+
+<!-- TEXT -->
+<div class="tap-text">TAP TO OPEN</div>
+
+<script>
+
+function openEnvelope() {
+
+    document.body.classList.add("open");
+
+    setTimeout(function () {
+
+        // hide envelope elements
+        document.querySelector(".left").style.display = "none";
+        document.querySelector(".right").style.display = "none";
+        document.querySelector(".seal").style.display = "none";
+        document.querySelector(".tap-text").style.display = "none";
+
+        // show image page
+        document.getElementById("page1").style.opacity = "1";
+
+    }, 1400);
+
+}
+
+</script>
+
+</body>
+</html>
