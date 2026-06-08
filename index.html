@@ -3,205 +3,109 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wedding Invitation</title>
+
+<title>Flipbook</title>
 
 <style>
-
-/* ===== BASE ===== */
-
-html, body {
-    margin: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: white;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-body {
-    position: relative;
+/* Full screen usable height (mobile safe) */
+body{
+    height:100dvh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#f5f5f5;
+    overflow:hidden;
 }
 
-/* ===== PAGE 1 (hidden initially) ===== */
-
-#page1 {
-    position: absolute;
-    inset: 0;
-
-    background-image: url("image1.png");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-
-    opacity: 0;
-    transition: opacity 0.6s ease;
-
-    z-index: 1;
+/* prevents overlap with mobile bottom bar */
+#flipbook{
+    height:92dvh;
+    width:min(calc(92dvh * 0.707), 100vw);
 }
-<!-- PAGE 1 -->
-<div id="pages">
-
-    <div class="page" style="background-image:url('image1.png')"></div>
-    <div class="page" style="background-image:url('image2.png')"></div>
-    <div class="page" style="background-image:url('image3.png')"></div>
-    <div class="page" style="background-image:url('image4.png')"></div>
-    <div class="page" style="background-image:url('image5.png')"></div>
-
-</div>
-
-/* ===== ENVELOPE PANELS ===== */
-
-.panel {
-    position: absolute;
-    top: 0;
-    width: 50%;
-    height: 100%;
-
-    background-size: cover;
-    background-position: center;
-
-    transition: transform 1.2s ease;
-    z-index: 10;
+/* Pages */
+.page{
+    background:#fff;
 }
 
-.left {
-    left: 0;
-    background-image: url("left.png");
-    box-shadow: -20px 0 25px rgba(0,0,0,0.25);
+.page img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    display:block;
 }
 
-.right {
-    right: 0;
-    background-image: url("right.png");
-    box-shadow: -20px 0 25px rgba(0,0,0,0.25);
+/* Turn.js pages */
+.turn-page{
+    background:#fff !important;
 }
 
-/* ===== SEAL ===== */
-
-.seal {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 140px;
-
-    transform: translate(-50%, -50%);
-    cursor: pointer;
-
-    z-index: 10;
-    transition: opacity 0.4s ease;
+/* Tap zones (optional but useful) */
+.tap{
+    position:absolute;
+    top:0;
+    width:50%;
+    height:100%;
+    z-index:10;
 }
-
-/* ===== TAP TEXT ===== */
-
-.tap-text {
-    position: absolute;
-    top: calc(50% + 100px);
-    left: 50%;
-
-    transform: translateX(-50%);
-
-    font-family: Garamond, serif;
-    font-size: 22px;
-    color: black;
-
-    z-index: 10;
-    transition: opacity 0.4s ease;
-}
-
-/* ===== OPEN ANIMATION ===== */
-
-.open .left {
-    transform: translateX(-100%);
-}
-
-.open .right {
-    transform: translateX(100%);
-}
-
-.open .seal,
-.open .tap-text {
-    opacity: 0;
-}
-
+#prev{ left:0; }
+#next{ right:0; }
 </style>
 </head>
 
 <body>
 
-<!-- PAGE 1 -->
-<div id="page1"></div>
+<div style="position:relative">
 
-<!-- ENVELOPE -->
-<div class="panel left"></div>
-<div class="panel right"></div>
+<div id="flipbook">
 
-<!-- SEAL -->
-<img src="seal.png" class="seal" onclick="openEnvelope()">
+    <div class="page"><img src="image1.png"></div>
+    <div class="page"><img src="image2.png"></div>
+    <div class="page"><img src="image3.png"></div>
+    <div class="page"><img src="image4.png"></div>
+    <div class="page"><img src="image5.png"></div>
 
-<!-- TEXT -->
-<div class="tap-text">TAP TO OPEN</div>
+</div>
+
+<div id="prev" class="tap"></div>
+<div id="next" class="tap"></div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
 
 <script>
-let currentPage = 0;
-const pages = document.getElementById("pages");
-function updatePages() {
-    pages.style.transform = `translateX(-${currentPage * 100}vw)`;
-}
-function openEnvelope() {
-<script>
-
-function openEnvelope() {
-    ...
-}
-
-/* STEP 2 - page update function (if you added it) */
-function updatePages() {
-    pages.style.transform = `translateX(-${currentPage * 100}vw)`;
-}
-
-/* STEP 3 - swipe controls (PUT HERE) */
-let startX = 0;
-
-document.addEventListener("touchstart", function(e) {
-    startX = e.touches[0].clientX;
-});
-
-document.addEventListener("touchend", function(e) {
-    let endX = e.changedTouches[0].clientX;
-    let diff = startX - endX;
-
-    if (Math.abs(diff) > 50) {
-
-        if (diff > 0 && currentPage < 4) {
-            currentPage++;
-        }
-
-        if (diff < 0 && currentPage > 0) {
-            currentPage--;
-        }
-
-        updatePages();
+function init(){
+    if($("#flipbook").data("turn")){
+        $("#flipbook").turn("destroy");
     }
-});
 
-</script>
-    document.body.classList.add("open");
-
-    setTimeout(function () {
-
-        // hide envelope elements
-        document.querySelector(".left").style.opacity = "0";
-        document.querySelector(".right").style.opacity = "0";
-        document.querySelector(".seal").style.display = "none";
-        document.querySelector(".tap-text").style.display = "none";
-        
-        // show image page
-        document.getElementById("page1").style.opacity = "1";
-        document.getElementById("pages").style.zIndex = "3";
-
-    }, 1400);
-
+    $("#flipbook").turn({
+        width: $("#flipbook").width(),
+        height: $("#flipbook").height(),
+        display: "single",
+        autoCenter: true,
+        gradients: true,
+        acceleration: true
+    });
 }
 
+$(document).ready(function(){
+
+    init();
+
+    $("#next").click(()=>$("#flipbook").turn("next"));
+    $("#prev").click(()=>$("#flipbook").turn("previous"));
+
+    $(window).on("resize", init);
+
+});
 </script>
 
 </body>
