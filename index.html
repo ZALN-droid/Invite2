@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Flipbook</title>
-
 <style>
 *{
     margin:0;
@@ -14,84 +12,167 @@
 }
 
 body{
-    overflow:hidden;
-    height:100vh;
-    background:#000;
+    background:#f5f2ed;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
 
-.page{
+.invite{
+    width:min(500px, 95vw);
+}
+
+.panel-container{
+    position:relative;
+    width:100%;
+    aspect-ratio:4/5;
+    perspective:2500px;
+}
+
+/* PANELS */
+.panel{
+    position:absolute;
+    width:100%;
+    height:50%;
+    left:0;
+    overflow:hidden;
+    transform-style:preserve-3d;
+    transition:transform 1.3s cubic-bezier(.22,.61,.36,1);
+}
+
+.top-panel{
+    top:0;
+    transform-origin:top center;
+}
+
+.bottom-panel{
+    bottom:0;
+    transform-origin:bottom center;
+}
+
+.invite.open .top-panel{
+    transform:rotateX(180deg);
+}
+
+.invite.open .bottom-panel{
+    transform:rotateX(-180deg);
+}
+
+.face{
     position:absolute;
     inset:0;
-    display:none;
+    backface-visibility:hidden;
 }
 
-.page.active{
+.face img{
+    width:100%;
+    height:200%;
+    object-fit:cover;
     display:block;
 }
 
-.page img{
+.top-panel .front img{ object-position:top; }
+.bottom-panel .front img{ object-position:bottom; }
+
+.top-panel .back{
+    transform:rotateX(180deg);
+}
+
+.bottom-panel .back{
+    transform:rotateX(180deg);
+}
+
+/* CENTER CONTENT */
+.center-content{
+    position:absolute;
+    inset:0;
+    z-index:1;
+}
+
+.center-content img{
     width:100%;
     height:100%;
-    object-fit:contain;
+    object-fit:cover;
+    display:block;
+}
+
+/* WAX SEAL */
+.waxseal{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    width:90px;
+    z-index:20;
+    transition:opacity .4s ease, transform .4s ease;
+}
+
+.invite.open .waxseal{
+    opacity:0;
+    transform:translate(-50%, -50%) scale(0.6);
+}
+
+/* TAP */
+.tap{
+    position:absolute;
+    inset:0;
+    z-index:30;
+    cursor:pointer;
 }
 </style>
 </head>
+
 <body>
 
-<div class="page active">
-    <img src="image1.png" alt="">
-</div>
+<div class="invite" id="invite">
 
-<div class="page">
-    <img src="image2.png" alt="">
-</div>
+    <div class="panel-container">
 
-<div class="page">
-    <img src="image3.png" alt="">
-</div>
+        <!-- TOP -->
+        <div class="panel top-panel">
 
-<div class="page">
-    <img src="image4.png" alt="">
-</div>
+            <div class="face front">
+                <img src="cover-top-front.jpg">
+            </div>
 
-<div class="page">
-    <img src="image5.png" alt="">
+            <div class="face back">
+                <img src="cover-top-back.jpg">
+            </div>
+
+        </div>
+
+        <!-- BOTTOM -->
+        <div class="panel bottom-panel">
+
+            <div class="face front">
+                <img src="cover-bottom-front.jpg">
+            </div>
+
+            <div class="face back">
+                <img src="cover-bottom-back.jpg">
+            </div>
+
+        </div>
+
+        <!-- INSIDE -->
+        <div class="center-content">
+            <img src="inside.jpg">
+        </div>
+
+        <!-- WAX SEAL -->
+        <img class="waxseal" src="waxseal.png">
+
+        <!-- TAP AREA -->
+        <div class="tap"></div>
+
+    </div>
+
 </div>
 
 <script>
-const pages = document.querySelectorAll('.page');
-let current = 0;
-
-function showPage(index){
-    pages.forEach(page => page.classList.remove('active'));
-    pages[index].classList.add('active');
-}
-
-document.addEventListener('click', function(e){
-
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-
-    const cornerWidth = w * 0.20;
-    const cornerHeight = h * 0.20;
-
-    const bottomRight =
-        e.clientX > w - cornerWidth &&
-        e.clientY > h - cornerHeight;
-
-    const bottomLeft =
-        e.clientX < cornerWidth &&
-        e.clientY > h - cornerHeight;
-
-    if(bottomRight && current < pages.length - 1){
-        current++;
-        showPage(current);
-    }
-
-    if(bottomLeft && current > 0){
-        current--;
-        showPage(current);
-    }
+document.querySelector('.tap').addEventListener('click', () => {
+    document.getElementById('invite').classList.toggle('open');
 });
 </script>
 
